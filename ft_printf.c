@@ -6,57 +6,56 @@
 /*   By: envillan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 22:40:54 by envillan          #+#    #+#             */
-/*   Updated: 2024/05/31 22:51:50 by envillan         ###   ########.fr       */
+/*   Updated: 2024/07/03 13:07:39 by envillan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	ft_check_type(char c, va_list *args, int *length, int *i)
+static int	ft_check_type(va_list arg, const char type)
 {
-	if (c == 's')
-		ft_string(va_arg(*args, char *), length);
-	else if (c == 'd' || c == 'i')
-		ft_number(va_arg(*args, int), length);
-	else if (c == 'u')
-		ft_unsigned_int(va_arg(*args, unsigned int), length);
-	else if (c == 'x')
-		ft_hexadecimal(va_arg(*args, unsigned int), length, 'x');
-	else if (c == 'X')
-		ft_hexadecimal(va_arg(*args, unsigned int), length, 'X');
-	else if (c == 'p')
-		ft_pointer(va_arg(*args, size_t), length);
-	else if (c == 'c')
-		ft_putchar_length(va_arg(*args, int), length);
-	else if (c == '%')
-		ft_putchar_length('%', length);
-	else
-		(*i)--;
+	int	size;
+
+	size = 0;
+	if (type == 's')
+		size += ft_print_string(va_arg(arg, char *));
+	else if (type == 'd' || type == 'i')
+		size += ft_print_number(va_arg(arg, int));
+	else if (type == 'u')
+		size += ft_print_unsigned(va_arg(arg, unsigned int));
+	else if (type == 'x' || type == 'X')
+		size += ft_print_hex(va_arg(arg, unsigned int), type);
+	else if (type == 'p')
+		size += ft_print_pointer(va_arg(arg, unsigned long long));
+	else if (type == 'c')
+		size += ft_print_char(va_arg(arg, int));
+	else if (type == '%')
+		size += ft_print_char('%');
+	return (size);
 }
 
-int	ft_printf(const char *string, ...)
+int	ft_printf(const char *str, ...)
 {
-	va_list	args;
+	va_list	arg;
 	int		i;
 	int		length;
 
 	i = 0;
 	length = 0;
-	va_start(args, string);
-	while (string[i] != '\0')
+	va_start(arg, str);
+	while (str[i] != '\0')
 	{
-		if (string[i] == '%')
+		if (str[i] == '%')
 		{
-			i++;
-			ft_check_type(string[i], &args, &length, &i);
-			i++;
+			length += ft_check_type(arg, str[i + 1]);
+			i += 2;
 		}
 		else
 		{
-			ft_putchar_length((char)string[i], &length);
+			length += ft_print_char(str[i]);
 			i++;
 		}
 	}
-	va_end(args);
+	va_end(arg);
 	return (length);
 }

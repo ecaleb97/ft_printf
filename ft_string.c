@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strings.c                                       :+:      :+:    :+:   */
+/*   ft_string.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: envillan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 22:26:07 by envillan          #+#    #+#             */
-/*   Updated: 2024/05/31 22:54:56 by envillan         ###   ########.fr       */
+/*   Updated: 2024/07/04 11:39:24 by envillan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_putchar_length(char c, int *length)
+int	ft_print_char(int c)
 {
-	write(1, &c, 1);
-	(*length)++;
+	if (write(1, &c, 1) != 1)
+		return (-1);
+	return (1);
 }
 
-void	ft_string(char *args, int *length)
+int	ft_print_string(char *str)
 {
-	size_t	i;
+	int	size;
 
-	i = 0;
-	if (!args)
-	{
-		write(1, "(null)", 6);
-		(*length) += 6;
-		return ;
-	}
-	while (args[i] != '\0')
-	{
-		ft_putchar_length(args[i], length);
-		i++;
-	}
+	size = 0;
+	if (str == 0)
+		return (ft_print_string("(null)"));
+	while (str[size])
+		size += ft_print_char(str[size]);
+	return (size);
 }
